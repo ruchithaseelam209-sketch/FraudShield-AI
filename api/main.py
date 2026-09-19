@@ -49,7 +49,10 @@ app.add_middleware(
 
 MODEL_PATH = "models/fraud_model.pkl"
 SCALER_PATH = "models/scaler.pkl"
-DATA_PATH = "data/creditcard.csv"
+
+# IMPORTANT:
+# The dataset is stored in compressed gzip format for deployment.
+DATA_PATH = "data/creditcard.csv.gz"
 
 
 model = joblib.load(MODEL_PATH)
@@ -819,7 +822,6 @@ def predict_transaction(
                 impact
             )
 
-            # Ignore invalid numerical values
             if not np.isfinite(
                 impact
             ):
@@ -831,8 +833,6 @@ def predict_transaction(
                 "feature":
                     feature_name,
 
-                # IMPORTANT:
-                # React expects "shap_value"
                 "shap_value":
                     round(
                         impact,
