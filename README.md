@@ -52,13 +52,13 @@ The dashboard provides access to transaction statistics, model performance, high
 ```text
                     ┌─────────────────────┐
                     │   Credit Card Data  │
-                    │   creditcard.csv.gz  │
+                    │   creditcard.csv.gz │
                     └──────────┬──────────┘
                                │
                                ▼
                     ┌─────────────────────┐
-                    │ Data Preprocessing   │
-                    │ & Feature Scaling    │
+                    │ Data Preprocessing  │
+                    │ & Feature Scaling   │
                     └──────────┬──────────┘
                                │
                                ▼
@@ -75,7 +75,7 @@ The dashboard provides access to transaction statistics, model performance, high
                                │
                                ▼
                     ┌─────────────────────┐
-                    │    FastAPI Backend  │
+                    │   FastAPI Backend   │
                     │       Render        │
                     └──────────┬──────────┘
                                │
@@ -145,6 +145,47 @@ The dataset is stored in compressed form as:
 data/creditcard.csv.gz
 ---
 
+## 🤖 Machine Learning Model
+
+FraudShield AI uses **Logistic Regression** for binary classification.
+
+### Training Data
+
+```text
+Training samples: 227,845
+Testing samples: 56,962
+Fraud cases in training: 394
+Fraud cases in testing: 98
+The preprocessing pipeline includes feature scaling using `StandardScaler`.
+
+The trained model and scaler are stored as:
+
+```text
+models/fraud_model.pkl
+models/scaler.pkl
+---
+
+## 📊 Model Performance
+
+The model achieved the following results on the test dataset:
+
+| Metric | Score |
+|---|---:|
+| ROC-AUC | **0.9721** |
+| PR-AUC | **0.7190** |
+| Fraud Recall | **0.91** |
+| Fraud Precision | **0.12** |
+| Accuracy | **0.99** |
+
+### Confusion Matrix
+
+```text
+                    Predicted
+                  Legitimate  Fraud
+Actual Legitimate    56219     645
+Actual Fraud             9      89
+---
+
 ## 📈 Dashboard Statistics
 
 The dashboard provides:
@@ -158,7 +199,11 @@ Fraud Rate                   0.17%
 ROC-AUC                    0.9721
 PR-AUC                     0.7190
 Fraud Recall                  0.91
-Current Risk Distribution
+---
+
+### Current Risk Distribution
+
+```text
 ALLOW     268,631
 REVIEW     12,564
 BLOCK       3,612
@@ -166,68 +211,58 @@ BLOCK       3,612
 TOTAL     284,807
 ---
 
-## ⚠️ Limitations
+## 🔌 API Endpoints
 
-This project is an **academic/prototype fraud detection system** and should not be treated as a production banking fraud prevention system.
+The FastAPI backend provides the following endpoints:
 
-Current limitations include:
+| Endpoint | Method | Purpose |
+|---|---|---|
+| `/` | GET | API status |
+| `/stats` | GET | Dataset statistics |
+| `/analytics` | GET | Analytics and model metrics |
+| `/transactions` | GET | Transaction data |
+| `/high-risk` | GET | High-risk transactions |
+| `/risk-summary` | GET | Risk distribution |
+| `/predict` | POST | Predict transaction risk |
+| `/confusion-matrix` | GET | Model confusion matrix |
 
-- Highly imbalanced dataset
-- Low fraud precision at the selected threshold
-- Historical dataset rather than live banking transactions
-- No real-time payment gateway integration
-- No continuous model retraining
-- No production authentication or authorization system
-- Model performance may change on new transaction distributions
-- Render free-tier backend may experience cold-start delays
+### Example API
 
+```text
+GET /
+Response:
+
+```json
+{
+  "project": "FraudShield AI",
+  "status": "online",
+  "version": "2.1.0",
+  "message": "Fraud detection API is running successfully."
+}
 ---
 
-## 🔮 Future Improvements
+## 📁 Project Structure
 
-Possible future improvements include:
-
-- Real-time transaction streaming
-- Advanced models such as XGBoost or LightGBM
-- Ensemble fraud detection
-- Better handling of class imbalance
-- Threshold optimization based on business cost
-- Real-time alerts and notifications
-- User authentication
-- Transaction history for individual users
-- Automated model retraining
-- Model monitoring and drift detection
-- Cloud database integration
-- Production-grade security
-- Advanced SHAP visualizations
-
----
-
-## 🎯 Project Objective
-
-The main objective of FraudShield AI is to demonstrate how **machine learning, explainable AI, backend APIs, and modern web technologies** can be combined to build an end-to-end fraud detection application.
-
-The project focuses not only on predicting fraud but also on making predictions understandable through **risk decisions and SHAP-based explanations**.
-
----
-
-## 👩‍💻 Author
-
-**Ruchitha Seelam**
-
-B.Tech – Artificial Intelligence & Data Science  
-VVIT College of Engineering
-
-### Profiles
-
-- LinkedIn: https://linkedin.com/in/ruchitha-seelam-305233382
-- GitHub: https://github.com/ruchithaseelam209-sketch
-- CodeChef: https://codechef.com/users/vvit24bq1a54
-
----
-
-## ⭐ Project
-
-If you find this project useful, consider giving the repository a ⭐ on GitHub.
-
-**FraudShield AI — Detect. Explain. Protect.**
+```text
+FraudShield-AI/
+│
+├── api/
+│   └── main.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   └── ...
+│   ├── package.json
+│   └── vite.config.js
+│
+├── data/
+│   └── creditcard.csv.gz
+│
+├── models/
+│   ├── fraud_model.pkl
+│   └── scaler.pkl
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
