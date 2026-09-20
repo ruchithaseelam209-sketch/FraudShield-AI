@@ -84,4 +84,62 @@ The dashboard provides access to transaction statistics, model performance, high
                     │ React + Vite        │
                     │ Analytics Dashboard │
                     │       Vercel        │
-                    └─────────────────────┘
+                    └─────────────────────┘---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- React
+- Vite
+- JavaScript
+- Recharts
+- CSS
+
+### Backend
+
+- Python
+- FastAPI
+- Uvicorn
+- Pandas
+- NumPy
+- Joblib
+
+### Machine Learning
+
+- Scikit-learn
+- Logistic Regression
+- StandardScaler
+- SHAP
+
+### Deployment
+
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Version Control:** Git & GitHub
+
+---
+
+## 📂 Dataset
+
+The project uses the **Credit Card Fraud Detection dataset** containing:
+
+- **284,807 transactions**
+- **492 fraudulent transactions**
+- **284,315 legitimate transactions**
+- **30 input features**
+
+### Dataset Distribution
+
+| Type | Count |
+|---|---:|
+| Legitimate | 284,315 |
+| Fraud | 492 |
+| Total | 284,807 |
+
+The dataset is highly imbalanced, which is an important consideration when evaluating fraud detection models.
+
+The dataset is stored in compressed form as:
+
+```text
+data/creditcard.csv.gz
