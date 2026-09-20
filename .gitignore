@@ -32,3 +32,4 @@ build/
 .DS_Store
 Thumbs.db
 data/creditcard.csv
+data/creditcard.csv.gz
