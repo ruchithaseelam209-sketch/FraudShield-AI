@@ -1,67 +1,87 @@
-# 🛡️ FraudShield AI
+# FraudShield AI
 
-## AI-Powered Fraud Detection & Risk Intelligence Platform
+An AI-powered **credit card fraud detection system** that analyzes transactions, assigns fraud risk scores, provides **ALLOW / REVIEW / BLOCK** decisions, and explains predictions using **SHAP explainability**.
 
-FraudShield AI is a machine learning based fraud detection platform that analyzes financial transactions, estimates fraud probability, assigns risk levels, and provides explainable AI insights using SHAP.
+## 🚀 Live Demo
 
-The project combines a machine learning model, FastAPI backend, and React dashboard to provide an interactive fraud monitoring system.
+**Frontend:**  
+https://fraudshield-ai-frontend-azure.vercel.app/
+
+**Backend API:**  
+https://fraudshield-ai-e790.onrender.com/
 
 ---
 
-## 🚀 Features
+## 📌 Project Overview
 
-- 🤖 Machine Learning based fraud detection
-- 📊 Real-time transaction risk analysis
-- 🛡️ ALLOW, REVIEW and BLOCK decisions
-- 🚨 High-risk transaction monitoring
-- 📈 Model performance evaluation
-- 🧮 Confusion Matrix visualization
-- 🧠 Explainable AI using SHAP
-- 📊 Transaction distribution analysis
-- 🔍 Individual transaction analysis
-- 🔄 Dashboard refresh functionality
-- ⚡ FastAPI REST API
-- 💻 React + Vite frontend
-- 📱 Responsive dashboard interface
+FraudShield AI is a full-stack machine learning application designed to detect potentially fraudulent credit card transactions.
+
+The system combines:
+
+- Machine Learning for fraud prediction
+- FastAPI for backend APIs
+- React + Vite for the dashboard
+- SHAP for explainable AI
+- Vercel for frontend deployment
+- Render for backend deployment
+
+The dashboard provides access to transaction statistics, model performance, high-risk alerts, risk distribution, and individual transaction predictions.
+
+---
+
+## ✨ Key Features
+
+- 🔍 **Fraud Detection** using Logistic Regression
+- 📊 **Interactive Analytics Dashboard**
+- ⚠️ **Risk Classification**
+  - LOW → ALLOW
+  - HIGH → REVIEW
+  - CRITICAL → BLOCK
+- 🧠 **SHAP Explainability** for individual predictions
+- 🚨 **High-Risk Transaction Alerts**
+- 📈 **Model Performance Metrics**
+- 📋 **Transaction Search and Filtering**
+- 🔢 **Fraud Probability and Risk Score**
+- 🌐 **Live Full-Stack Deployment**
+- 🔌 **REST API using FastAPI**
 
 ---
 
 ## 🏗️ System Architecture
 
 ```text
-                 ┌──────────────────────┐
-                 │   Credit Card Data   │
-                 │    creditcard.csv    │
-                 └──────────┬───────────┘
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │ Machine Learning     │
-                 │ Fraud Detection      │
-                 │ Model                │
-                 └──────────┬───────────┘
-                            │
-                     Prediction
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │    FastAPI Backend   │
-                 │                      │
-                 │ Prediction API       │
-                 │ Analytics API        │
-                 │ Risk Engine          │
-                 │ SHAP Explanation     │
-                 └──────────┬───────────┘
-                            │
-                         REST API
-                            │
-                            ▼
-                 ┌──────────────────────┐
-                 │   React Dashboard    │
-                 │                      │
-                 │ Analytics            │
-                 │ Risk Monitoring      │
-                 │ Alerts               │
-                 │ Transaction Analysis │
-                 │ Explainable AI       │
-                 └──────────────────────┘
+                    ┌─────────────────────┐
+                    │   Credit Card Data  │
+                    │   creditcard.csv.gz  │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Data Preprocessing   │
+                    │ & Feature Scaling    │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ Logistic Regression │
+                    │   Fraud Detection   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │   SHAP Explainable  │
+                    │         AI          │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │    FastAPI Backend  │
+                    │       Render        │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+                    ┌─────────────────────┐
+                    │ React + Vite        │
+                    │ Analytics Dashboard │
+                    │       Vercel        │
+                    └─────────────────────┘
