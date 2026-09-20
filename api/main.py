@@ -35,7 +35,8 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:5174",
-        "http://127.0.0.1:5174"
+        "http://127.0.0.1:5174",
+        "https://fraudshield-ai-frontend-azure.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -49,9 +50,6 @@ app.add_middleware(
 
 MODEL_PATH = "models/fraud_model.pkl"
 SCALER_PATH = "models/scaler.pkl"
-
-# IMPORTANT:
-# The dataset is stored in compressed gzip format for deployment.
 DATA_PATH = "data/creditcard.csv.gz"
 
 
@@ -648,26 +646,7 @@ def get_risk_summary():
 
 
 # ============================================================
-# 15. CONFUSION MATRIX
-# ============================================================
-
-@app.get("/confusion-matrix")
-def get_confusion_matrix():
-
-    return {
-
-        "true_negative": 56219,
-
-        "false_positive": 645,
-
-        "false_negative": 9,
-
-        "true_positive": 89
-    }
-
-
-# ============================================================
-# 16. SINGLE TRANSACTION PREDICTION
+# 15. SINGLE TRANSACTION PREDICTION
 # ============================================================
 
 @app.post("/predict")
@@ -822,6 +801,7 @@ def predict_transaction(
                 impact
             )
 
+            # Ignore invalid numerical values
             if not np.isfinite(
                 impact
             ):
@@ -833,6 +813,8 @@ def predict_transaction(
                 "feature":
                     feature_name,
 
+                # IMPORTANT:
+                # React expects "shap_value"
                 "shap_value":
                     round(
                         impact,

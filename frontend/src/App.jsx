@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import {
   ResponsiveContainer,
   BarChart,
@@ -16,13 +15,12 @@ import {
 
 import "./App.css";
 
-const API = "http://127.0.0.1:8000";
+const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 function App() {
   const [stats, setStats] = useState(null);
   const [analytics, setAnalytics] = useState(null);
   const [riskSummary, setRiskSummary] = useState(null);
-  const [confusionMatrix, setConfusionMatrix] = useState(null);
 
   const [transactions, setTransactions] = useState([]);
   const [highRisk, setHighRisk] = useState([]);
@@ -37,10 +35,6 @@ function App() {
 
   const [error, setError] = useState("");
 
-  /* ============================================================
-     LOAD DASHBOARD DATA
-     ============================================================ */
-
   const loadDashboard = async () => {
     try {
       setLoading(true);
@@ -50,14 +44,12 @@ function App() {
         statsResponse,
         analyticsResponse,
         riskResponse,
-        confusionResponse,
         transactionsResponse,
         highRiskResponse,
       ] = await Promise.all([
         fetch(`${API}/stats`),
         fetch(`${API}/analytics`),
         fetch(`${API}/risk-summary`),
-        fetch(`${API}/confusion-matrix`),
         fetch(
           `${API}/transactions?limit=20&risk_filter=${riskFilter}`
         ),
@@ -68,7 +60,6 @@ function App() {
         !statsResponse.ok ||
         !analyticsResponse.ok ||
         !riskResponse.ok ||
-        !confusionResponse.ok ||
         !transactionsResponse.ok ||
         !highRiskResponse.ok
       ) {
@@ -76,21 +67,31 @@ function App() {
       }
 
       const statsData = await statsResponse.json();
-      const analyticsData = await analyticsResponse.json();
-      const riskData = await riskResponse.json();
-      const confusionData = await confusionResponse.json();
-      const transactionsData = await transactionsResponse.json();
-      const highRiskData = await highRiskResponse.json();
 
-      console.log("HIGH RISK API RESPONSE:", highRiskData);
-      console.log("CONFUSION MATRIX API RESPONSE:", confusionData);
+      const analyticsData =
+        await analyticsResponse.json();
+
+      const riskData =
+        await riskResponse.json();
+
+      const transactionsData =
+        await transactionsResponse.json();
+
+      const highRiskData =
+        await highRiskResponse.json();
+
+      console.log(
+        "HIGH RISK API RESPONSE:",
+        highRiskData
+      );
 
       setStats(statsData);
       setAnalytics(analyticsData);
       setRiskSummary(riskData);
-      setConfusionMatrix(confusionData);
 
-      /* TRANSACTION RESPONSE */
+      /*
+       * TRANSACTION RESPONSE
+       */
 
       const transactionList =
         Array.isArray(transactionsData)
@@ -100,7 +101,20 @@ function App() {
             transactionsData.data ||
             [];
 
-      /* HIGH-RISK RESPONSE */
+      /*
+       * HIGH-RISK RESPONSE
+       *
+       * Backend returns:
+       *
+       * {
+       *   total_high_risk: 16176,
+       *   alerts: [...]
+       * }
+       *
+       * Therefore we MUST read:
+       *
+       * highRiskData.alerts
+       */
 
       const highRiskList =
         Array.isArray(highRiskData)
@@ -139,17 +153,13 @@ function App() {
     }
   };
 
-  /* ============================================================
-     INITIAL LOAD
-     ============================================================ */
-
   useEffect(() => {
     loadDashboard();
   }, [riskFilter]);
 
-  /* ============================================================
-     ANALYZE TRANSACTION
-     ============================================================ */
+  /*
+   * ANALYZE TRANSACTION
+   */
 
   const analyzeTransaction = async (
     id = transactionId
@@ -201,7 +211,8 @@ function App() {
         );
       }
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       console.log(
         "PREDICTION API RESPONSE:",
@@ -220,9 +231,9 @@ function App() {
     }
   };
 
-  /* ============================================================
-     FORMAT NUMBER
-     ============================================================ */
+  /*
+   * FORMAT NUMBER
+   */
 
   const formatNumber = (value) => {
     if (
@@ -237,9 +248,22 @@ function App() {
     );
   };
 
-  /* ============================================================
-     FORMAT PROBABILITY
-     ============================================================ */
+  /*
+   * FORMAT PROBABILITY
+   *
+   * Backend currently returns:
+   *
+   * 21.34
+   * 4.02
+   * 100.0
+   *
+   * These are already percentage values.
+   *
+   * Therefore:
+   *
+   * 21.34 -> 21.34%
+   * 100.0 -> 100.00%
+   */
 
   const formatProbability = (value) => {
     if (
@@ -252,9 +276,9 @@ function App() {
     return `${Number(value).toFixed(2)}%`;
   };
 
-  /* ============================================================
-     RISK CSS CLASS
-     ============================================================ */
+  /*
+   * RISK CSS CLASS
+   */
 
   const getRiskClass = (decision) => {
     if (!decision) {
@@ -264,9 +288,9 @@ function App() {
     return decision.toLowerCase();
   };
 
-  /* ============================================================
-     RISK BAR CLASS
-     ============================================================ */
+  /*
+   * RISK BAR CLASS
+   */
 
   const getRiskFillClass = (decision) => {
     if (!decision) {
@@ -287,9 +311,9 @@ function App() {
     return "block-fill";
   };
 
-  /* ============================================================
-     TRANSACTION DISTRIBUTION
-     ============================================================ */
+  /*
+   * TRANSACTION DISTRIBUTION
+   */
 
   const distributionData = analytics
     ? [
@@ -309,9 +333,9 @@ function App() {
       ]
     : [];
 
-  /* ============================================================
-     MODEL PERFORMANCE
-     ============================================================ */
+  /*
+   * MODEL PERFORMANCE
+   */
 
   const performanceData = analytics
     ? [
@@ -338,9 +362,9 @@ function App() {
       ]
     : [];
 
-  /* ============================================================
-     RISK SUMMARY CHART
-     ============================================================ */
+  /*
+   * RISK SUMMARY CHART
+   */
 
   const riskChartData = riskSummary
     ? [
@@ -361,16 +385,18 @@ function App() {
       ]
     : [];
 
-  /* ============================================================
-     INITIAL LOADING
-     ============================================================ */
+  /*
+   * INITIAL LOADING
+   */
 
   if (loading && !stats) {
     return (
       <div className="app">
+
         <div className="loading">
           Loading FraudShield AI dashboard...
         </div>
+
       </div>
     );
   }
@@ -407,6 +433,7 @@ function App() {
           </div>
 
         </div>
+
 
         <div className="header-label">
           AI-POWERED FRAUD INTELLIGENCE
@@ -473,6 +500,7 @@ function App() {
       {stats && (
 
         <section className="stats-grid">
+
 
           <div className="stat-card">
 
@@ -581,6 +609,7 @@ function App() {
 
           </div>
 
+
         </section>
 
       )}
@@ -659,6 +688,7 @@ function App() {
                   >
 
                     <Cell />
+
                     <Cell />
 
                   </Pie>
@@ -816,6 +846,7 @@ function App() {
 
             <div className="metrics-grid">
 
+
               <div className="metric">
 
                 <span>
@@ -863,291 +894,15 @@ function App() {
 
               </div>
 
+
             </div>
 
           </div>
+
 
         </div>
 
       </section>
-
-
-      {/* =====================================================
-          CONFUSION MATRIX
-          ===================================================== */}
-
-      {confusionMatrix && (
-
-        <section className="section">
-
-          <div className="section-heading">
-
-            <span className="section-tag">
-              MODEL EVALUATION
-            </span>
-
-            <h2>
-              Confusion Matrix
-            </h2>
-
-            <p>
-              Detailed classification results of
-              the fraud detection model.
-            </p>
-
-          </div>
-
-
-          <div className="panel confusion-matrix-card">
-
-            <div className="panel-header">
-
-              <div>
-
-                <span className="panel-label">
-                  CLASSIFICATION RESULTS
-                </span>
-
-                <h3>
-                  Prediction vs Actual
-                </h3>
-
-              </div>
-
-              <div className="panel-icon">
-                🧮
-              </div>
-
-            </div>
-
-
-            {/* 2 x 2 CONFUSION MATRIX */}
-
-            <div className="confusion-matrix-wrapper">
-
-              {/* COLUMN HEADERS */}
-
-              <div className="cm-title-row">
-
-                <div></div>
-
-                <div>
-                  Predicted
-                  <strong>
-                    Legitimate
-                  </strong>
-                </div>
-
-                <div>
-                  Predicted
-                  <strong>
-                    Fraud
-                  </strong>
-                </div>
-
-              </div>
-
-
-              {/* ACTUAL LEGITIMATE ROW */}
-
-              <div className="cm-data-row">
-
-                <div className="cm-row-title">
-
-                  <span>
-                    Actual
-                  </span>
-
-                  <strong>
-                    Legitimate
-                  </strong>
-
-                </div>
-
-
-                {/* TRUE NEGATIVE */}
-
-                <div className="cm-cell tn">
-
-                  <span>
-                    True Negative
-                  </span>
-
-                  <strong>
-                    {formatNumber(
-                      confusionMatrix.true_negative
-                    )}
-                  </strong>
-
-                  <small>
-                    Legitimate correctly identified
-                  </small>
-
-                </div>
-
-
-                {/* FALSE POSITIVE */}
-
-                <div className="cm-cell fp">
-
-                  <span>
-                    False Positive
-                  </span>
-
-                  <strong>
-                    {formatNumber(
-                      confusionMatrix.false_positive
-                    )}
-                  </strong>
-
-                  <small>
-                    Legitimate flagged as fraud
-                  </small>
-
-                </div>
-
-              </div>
-
-
-              {/* ACTUAL FRAUD ROW */}
-
-              <div className="cm-data-row">
-
-                <div className="cm-row-title">
-
-                  <span>
-                    Actual
-                  </span>
-
-                  <strong>
-                    Fraud
-                  </strong>
-
-                </div>
-
-
-                {/* FALSE NEGATIVE */}
-
-                <div className="cm-cell fn">
-
-                  <span>
-                    False Negative
-                  </span>
-
-                  <strong>
-                    {formatNumber(
-                      confusionMatrix.false_negative
-                    )}
-                  </strong>
-
-                  <small>
-                    Fraud missed by the model
-                  </small>
-
-                </div>
-
-
-                {/* TRUE POSITIVE */}
-
-                <div className="cm-cell tp">
-
-                  <span>
-                    True Positive
-                  </span>
-
-                  <strong>
-                    {formatNumber(
-                      confusionMatrix.true_positive
-                    )}
-                  </strong>
-
-                  <small>
-                    Fraud correctly identified
-                  </small>
-
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* CONFUSION MATRIX SUMMARY */}
-
-            <div className="cm-summary">
-
-              <div className="cm-summary-item">
-
-                <span>
-                  Total Predictions
-                </span>
-
-                <strong>
-                  {formatNumber(
-                    Number(
-                      confusionMatrix.true_negative
-                    ) +
-                    Number(
-                      confusionMatrix.false_positive
-                    ) +
-                    Number(
-                      confusionMatrix.false_negative
-                    ) +
-                    Number(
-                      confusionMatrix.true_positive
-                    )
-                  )}
-                </strong>
-
-              </div>
-
-
-              <div className="cm-summary-item">
-
-                <span>
-                  Correct Predictions
-                </span>
-
-                <strong>
-                  {formatNumber(
-                    Number(
-                      confusionMatrix.true_negative
-                    ) +
-                    Number(
-                      confusionMatrix.true_positive
-                    )
-                  )}
-                </strong>
-
-              </div>
-
-
-              <div className="cm-summary-item">
-
-                <span>
-                  Incorrect Predictions
-                </span>
-
-                <strong>
-                  {formatNumber(
-                    Number(
-                      confusionMatrix.false_positive
-                    ) +
-                    Number(
-                      confusionMatrix.false_negative
-                    )
-                  )}
-                </strong>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-      )}
 
 
       {/* =====================================================
@@ -1287,6 +1042,7 @@ function App() {
               </div>
 
             </div>
+
 
           </div>
 
